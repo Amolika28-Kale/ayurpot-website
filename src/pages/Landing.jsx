@@ -9,37 +9,68 @@ import serviceChronic from "../../public/chronic.png";
 import serviceWorkshop from "../../public/educational.png";
 import servicePreventive from "../../public/preventive.png";
 import { HeartPulse, Flower2, ShieldPlus, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import Section from "../components/Section";
+import ProductSlider from "../components/ProductSlider";
 
 export default function Landing() {
-  // ===== GLOBAL ANIMATION VARIANTS =====
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0 },
-};
+// Mouse Parallax Logic
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
-const fadeIn = {
+  const handleMouse = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
+  };
+
+  const resetMouse = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  // Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.3 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 25 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { type: "spring", stiffness: 100, damping: 20 } 
+    },
+  };
+
+const container = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
-const staggerContainer = {
-  hidden: {},
-  visible: {
+  show: {
+    opacity: 1,
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.12,
     },
   },
 };
 
-const float = {
-  animate: {
-    y: [0, -12, 0],
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
+const card = {
+  hidden: { opacity: 0, y: 30 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: "easeOut" },
   },
 };
 
@@ -50,179 +81,195 @@ const float = {
 
 {/* HERO SECTION */}
 <section
-  id="hero"
-  className="relative overflow-hidden bg-gradient-to-b from-[#F3FAF6] via-white to-white py-24 lg:py-36"
->
-  {/* Decorative Blobs */}
-  <div className="absolute -top-24 -left-24 w-[420px] h-[420px] bg-green-200/40 rounded-full blur-3xl" />
-  <div className="absolute top-1/3 -right-32 w-[460px] h-[460px] bg-emerald-200/40 rounded-full blur-3xl" />
-
-  {/* Floating Sparkles */}
-  <motion.div
-    animate={{ y: [0, -14, 0] }}
-    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-    className="absolute top-32 left-16 text-green-300 text-xl"
-  >
-    ✨
-  </motion.div>
-
-  <motion.div
-    animate={{ y: [0, 18, 0] }}
-    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-    className="absolute bottom-40 right-24 text-emerald-300 text-2xl"
-  >
-    🌿
-  </motion.div>
-
-  <div className="relative z-10 max-w-[1200px] mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
-
-    {/* LEFT CONTENT */}
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, ease: "easeOut" }}
-      className="space-y-10"
+      id="hero"
+      className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-[#F3FAF6] via-white to-white py-24 lg:py-32"
     >
-      {/* Badge */}
-      <motion.span
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-green-100 text-green-800 text-xs font-semibold tracking-widest uppercase shadow-sm"
-      >
-        🌿 Authentic Ayurveda
-      </motion.span>
-
-      {/* Heading */}
-      <motion.h1
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="font-semibold text-slate-900 leading-[1.1]"
-      >
-        <motion.span
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="block text-[28px] md:text-[36px] lg:text-[40px] font-medium text-slate-800"
-        >
-          Holistic Healing with
-        </motion.span>
-
-        <motion.span
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.15, duration: 0.7 }}
-          className="block mt-2 text-[38px] md:text-[52px] lg:text-[64px] font-bold text-green-700"
-        >
-          Dr. Shweta’s Ayurpot
-        </motion.span>
-      </motion.h1>
-
-      {/* Subtitle */}
-      <p className="text-lg text-slate-600 italic">
-        Dr. Shweta Shete • MD, BAMS <span className="mx-2">•</span> Mumbai
-      </p>
-
-      {/* Description */}
-      <p className="max-w-xl text-lg leading-relaxed text-slate-600">
-        A trusted Ayurvedic wellness clinic blending ancient wisdom with
-        modern diagnostics. Personalized care focused on root-cause healing
-        and long-term well-being.
-      </p>
-
-      {/* CTA */}
-      <div className="flex gap-5 flex-wrap">
-        <motion.a
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          href="#contact"
-          className="bg-green-700 hover:bg-green-800 text-white px-9 py-4 rounded-full font-semibold shadow-xl shadow-green-200"
-        >
-          Book Consultation
-        </motion.a>
-
-        <motion.a
-          whileHover={{ scale: 1.04 }}
-          href="#about"
-          className="px-9 py-4 rounded-full border-2 border-green-700 text-green-700 font-semibold hover:bg-green-50"
-        >
-          Learn More
-        </motion.a>
+      {/* 1. ANIMATED BACKGROUND PARTICLES */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute bg-green-400/10 rounded-full blur-3xl"
+            animate={{
+              y: [0, -80, 0],
+              x: [0, 40, 0],
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.6, 0.3],
+            }}
+            transition={{
+              duration: 10 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            style={{
+              width: Math.random() * 300 + 200,
+              height: Math.random() * 300 + 200,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+          />
+        ))}
       </div>
 
-      {/* TRUST STRIP */}
-      <div className="pt-10 border-t border-slate-200">
-        <div className="flex flex-wrap items-center gap-12">
-          <div>
-            <h3 className="text-4xl font-extrabold text-green-800">3+</h3>
-            <p className="text-xs text-slate-500 uppercase tracking-widest font-medium">
-              Years of Experience
-            </p>
-          </div>
+      {/* Decorative Floating Icons */}
+      <motion.div
+        animate={{ y: [0, -15, 0], opacity: [0.4, 1, 0.4] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-32 left-10 md:left-20 text-green-300 text-3xl hidden md:block"
+      >
+        ✨
+      </motion.div>
+      <motion.div
+        animate={{ y: [0, 20, 0], rotate: [0, 15, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-32 right-10 md:right-20 text-emerald-300 text-4xl hidden md:block"
+      >
+        🌿
+      </motion.div>
 
-          <div className="flex flex-wrap gap-3">
-            {["MD, BAMS Certified", "Panel Doctor", "Online & In-Clinic"].map(
-              (badge) => (
-                <span
-                  key={badge}
-                  className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm text-sm text-slate-700 font-medium"
-                >
-                  <span className="text-green-600">✔</span> {badge}
-                </span>
-              )
-            )}
-          </div>
-        </div>
+      <div className="relative z-10 max-w-[1280px] mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        
+        {/* LEFT CONTENT */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
+          <motion.span
+            variants={itemVariants}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-bold tracking-widest uppercase shadow-sm border border-green-200"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+            </span>
+            Authentic Ayurveda
+          </motion.span>
+
+          <motion.div variants={itemVariants} className="space-y-2">
+            <h2 className="text-[32px] md:text-[42px] lg:text-[48px] font-medium text-slate-800 leading-tight">
+              Holistic Healing with
+            </h2>
+            <h1 className="text-[42px] md:text-[60px] lg:text-[72px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-emerald-500 leading-none">
+              Dr. Shweta’s Ayurpot
+            </h1>
+          </motion.div>
+
+          <motion.p variants={itemVariants} className="text-xl text-slate-600 font-medium italic flex items-center gap-3">
+            Dr. Shweta Shete <span className="text-green-300">•</span> MD, BAMS <span className="text-green-300">•</span> Mumbai
+          </motion.p>
+
+          <motion.p variants={itemVariants} className="max-w-xl text-lg leading-relaxed text-slate-600">
+            Blending ancient wisdom with modern diagnostics. Our personalized care 
+            focuses on root-cause healing and sustainable long-term well-being.
+          </motion.p>
+
+          <motion.div variants={itemVariants} className="flex gap-4 flex-wrap pt-4">
+            <motion.a
+              whileHover={{ scale: 1.05, boxShadow: "0px 15px 30px rgba(21, 128, 61, 0.25)" }}
+              whileTap={{ scale: 0.98 }}
+              href="#contact"
+              className="relative overflow-hidden group bg-green-700 text-white px-10 py-4 rounded-full font-bold shadow-xl transition-all"
+            >
+              <span className="relative z-10">Book Consultation</span>
+              <motion.div 
+                className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"
+              />
+            </motion.a>
+
+            <motion.a
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(21, 128, 61, 0.05)" }}
+              whileTap={{ scale: 0.98 }}
+              href="#about"
+              className="px-10 py-4 rounded-full border-2 border-green-700 text-green-700 font-bold transition-all"
+            >
+              Learn More
+            </motion.a>
+          </motion.div>
+
+          {/* TRUST STRIP */}
+          <motion.div variants={itemVariants} className="pt-10 border-t border-slate-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8">
+              <div>
+                <motion.h3 className="text-5xl font-black text-green-800">3+</motion.h3>
+                <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] font-bold">Years Experience</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {["MD, BAMS Certified", "Online & In-Clinic"].map((badge) => (
+                  <span key={badge} className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm text-sm text-slate-700 font-semibold">
+                    <span className="text-green-600 text-lg">✓</span> {badge}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+
+        {/* RIGHT IMAGE SECTION */}
+        <motion.div 
+          className="relative group perspective-1000"
+          onMouseMove={handleMouse}
+          onMouseLeave={resetMouse}
+          style={{ rotateX, rotateY }}
+        >
+          {/* Animated Background Rings */}
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -inset-10 border-2 border-dashed border-green-100 rounded-full"
+          />
+          
+          {/* Main Decorative Frame */}
+          <motion.div 
+            animate={{ rotate: [2, -2, 2] }}
+            transition={{ duration: 6, repeat: Infinity }}
+            className="absolute -inset-4 rounded-[3rem] bg-gradient-to-tr from-green-200 via-emerald-100 to-green-300 opacity-50 blur-sm" 
+          />
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="relative rounded-[2.5rem] overflow-hidden shadow-2xl z-10 border-[8px] border-white"
+          >
+            <img
+              src={heroImg}
+              alt="Dr Shweta"
+              className="w-full h-[500px] lg:h-[600px] object-cover transform transition-transform duration-700 group-hover:scale-110"
+            />
+          </motion.div>
+
+          {/* Floating Glass Card */}
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -bottom-6 -right-6 md:right-0 bg-white/90 backdrop-blur-md px-8 py-5 rounded-2xl shadow-2xl border border-white/50 z-20"
+          >
+            <div className="flex items-center gap-4">
+              <div className="bg-green-100 p-2 rounded-lg">🌿</div>
+              <div>
+                <p className="text-sm font-bold text-green-800 leading-none">Root-Cause Specialist</p>
+                <p className="text-[11px] text-slate-500 mt-1 uppercase font-semibold">100% Natural Treatment</p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
-    </motion.div>
 
-    {/* RIGHT IMAGE */}
-    <div className="relative group">
-      {/* Decorative Frame */}
-      <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-tr from-green-200 to-emerald-200 rotate-3 group-hover:rotate-0 transition-transform duration-500" />
-
-      <motion.div
-        whileHover={{ scale: 1.03 }}
-        transition={{ duration: 0.5 }}
-        className="relative rounded-[2rem] overflow-hidden shadow-2xl"
+      {/* Scroll Indicator */}
+      <motion.div 
+        animate={{ y: [0, 10, 0], opacity: [0.3, 1, 0.3] }}
+        transition={{ repeat: Infinity, duration: 2.5 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <img
-          src={heroImg}
-          alt="Dr Shweta"
-          className="w-full h-full object-cover"
-        />
+        <div className="w-[2px] h-12 bg-gradient-to-b from-green-600 to-transparent rounded-full" />
       </motion.div>
-
-      {/* Floating Tag */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-        className="absolute -bottom-6 left-6 bg-white px-6 py-3 rounded-2xl shadow-lg border border-slate-100"
-      >
-        <p className="text-sm font-semibold text-green-700">
-          Root-Cause Healing Approach
-        </p>
-        <p className="text-xs text-slate-500">
-          Personalized Ayurvedic Care
-        </p>
-      </motion.div>
-    </div>
-  </div>
-</section>
-
-
-
+    </section>
 {/* ABOUT SECTION */}
-<motion.section
+<Section
   id="about"
-  variants={fadeUp}
-  initial="hidden"
-  whileInView="visible"
-  viewport={{ once: true }}
-  transition={{ duration: 0.9, ease: "easeOut" }}
-  className="relative py-28 bg-gradient-to-b from-white to-[#F7FBF8] overflow-hidden"
+  className="bg-gradient-to-b from-white to-[#F7FBF8]"
 >
 
   {/* Soft Decorative Glow */}
@@ -323,223 +370,247 @@ const float = {
 
     </div>
   </div>
-</motion.section>
+  <ProductSlider/>
+</Section>
+{/* Services */}
+    <section
+      id="services"
+      className="relative py-28 bg-gradient-to-b from-[#F3F8F5] to-white overflow-hidden"
+    >
+      {/* Decorative Glows */}
+      <div className="absolute -top-24 left-1/3 w-[420px] h-[420px] bg-green-100/60 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 -right-32 w-[420px] h-[420px] bg-emerald-100/50 rounded-full blur-3xl" />
 
-
-{/* SERVICES SECTION */}
-<section
-  id="services"
-  className="relative py-28 bg-gradient-to-b from-[#F3F8F5] to-white overflow-hidden"
->
-  {/* Decorative Glows */}
-  <div className="absolute -top-24 left-1/3 w-[420px] h-[420px] bg-green-100/60 rounded-full blur-3xl" />
-  <div className="absolute bottom-0 -right-32 w-[420px] h-[420px] bg-emerald-100/50 rounded-full blur-3xl" />
-
-  <div className="relative max-w-[1200px] mx-auto px-6">
-
-    {/* SECTION HEADER */}
-    <div className="text-center max-w-3xl mx-auto">
-      <span className="inline-block text-xs font-semibold tracking-widest uppercase text-green-700 mb-3">
-        Our Expertise
-      </span>
-
-      <h2 className="text-[40px] font-semibold text-slate-900">
-        Services & <span className="text-green-700 font-bold">Treatments</span>
-      </h2>
-
-      <p className="mt-4 text-slate-600 text-lg leading-relaxed">
-        Comprehensive Ayurvedic care tailored to your unique health needs,
-        combining ancient wisdom with modern lifestyle guidance.
-      </p>
-    </div>
-
-    {/* SERVICES GRID */}
-    <div className="grid md:grid-cols-3 gap-10 mt-20">
-      {[
-        {
-          title: "Ayurvedic Consultations",
-          image: serviceConsultation,
-          desc:
-            "Detailed assessment based on your body constitution (Prakriti) and imbalances (Vikriti).",
-        },
-        {
-          title: "Herbal Treatments",
-          image: serviceHerbal,
-          desc:
-            "Natural, customized herbal remedies using time-tested Ayurvedic formulations.",
-        },
-        {
-          title: "Wellness Counseling",
-          image: serviceWellness,
-          desc:
-            "Lifestyle, diet, and daily routine guidance for long-term health and balance.",
-        },
-        {
-          title: "Chronic Disease Management",
-          image: serviceChronic,
-          desc:
-            "Holistic management of diabetes, arthritis, digestive and lifestyle disorders.",
-        },
-        {
-          title: "Educational Workshops",
-          image: serviceWorkshop,
-          desc:
-            "Interactive sessions to spread Ayurvedic knowledge and preventive healthcare awareness.",
-        },
-        {
-          title: "Preventive Care Programs",
-          image: servicePreventive,
-          desc:
-            "Proactive wellness programs focused on disease prevention and vitality enhancement.",
-        },
-      ].map((service, i) => (
-        <div
-          key={i}
-          className="group relative bg-white/80 backdrop-blur rounded-[2rem] shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-100"
+      <motion.div
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-120px" }}
+        variants={container}
+        className="relative max-w-[1200px] mx-auto px-6"
+      >
+        {/* HEADER */}
+        <motion.div
+          variants={card}
+          className="text-center max-w-3xl mx-auto"
         >
-          {/* IMAGE */}
-          <div className="relative h-56 overflow-hidden">
-            <img
-              src={service.image}
-              alt={service.title}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-70" />
-          </div>
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-green-700 mb-3">
+            Our Expertise
+          </span>
 
-          {/* CONTENT */}
-          <div className="p-8">
-            <h3 className="text-lg font-semibold text-slate-900 group-hover:text-green-700 transition">
-              {service.title}
-            </h3>
+          <h2 className="text-[40px] font-semibold text-slate-900">
+            Services &{" "}
+            <span className="text-green-700 font-bold">Treatments</span>
+          </h2>
 
-            <p className="mt-3 text-slate-600 text-sm leading-relaxed">
-              {service.desc}
-            </p>
+          <p className="mt-4 text-slate-600 text-lg leading-relaxed">
+            Comprehensive Ayurvedic care tailored to your unique health needs,
+            combining ancient wisdom with modern lifestyle guidance.
+          </p>
+        </motion.div>
 
-          </div>
-        </div>
-      ))}
-    </div>
+        {/* SERVICES GRID */}
+        <motion.div
+          variants={container}
+          className="grid md:grid-cols-3 gap-10 mt-20"
+        >
+          {[
+            {
+              title: "Ayurvedic Consultations",
+              image: serviceConsultation,
+              desc:
+                "Detailed assessment based on your body constitution (Prakriti) and imbalances (Vikriti).",
+            },
+            {
+              title: "Herbal Treatments",
+              image: serviceHerbal,
+              desc:
+                "Natural, customized herbal remedies using time-tested Ayurvedic formulations.",
+            },
+            {
+              title: "Wellness Counseling",
+              image: serviceWellness,
+              desc:
+                "Lifestyle, diet, and daily routine guidance for long-term health and balance.",
+            },
+            {
+              title: "Chronic Disease Management",
+              image: serviceChronic,
+              desc:
+                "Holistic management of diabetes, arthritis, digestive and lifestyle disorders.",
+            },
+            {
+              title: "Educational Workshops",
+              image: serviceWorkshop,
+              desc:
+                "Interactive sessions to spread Ayurvedic knowledge and preventive healthcare awareness.",
+            },
+            {
+              title: "Preventive Care Programs",
+              image: servicePreventive,
+              desc:
+                "Proactive wellness programs focused on disease prevention and vitality enhancement.",
+            },
+          ].map((service, i) => (
+            <motion.div
+              key={i}
+              variants={card}
+              whileHover={{ y: -6 }}
+              className="group relative bg-white/80 backdrop-blur rounded-[2rem] shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-slate-100"
+            >
+              {/* IMAGE */}
+              <div className="relative h-56 overflow-hidden">
+                <motion.img
+                  src={service.image}
+                  alt={service.title}
+                  className="h-full w-full object-cover"
+                  whileHover={{ scale: 1.08 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-70" />
+              </div>
 
-    {/* BOTTOM HIGHLIGHT */}
-    <div className="mt-24 max-w-4xl mx-auto bg-gradient-to-r from-green-800 to-emerald-700 rounded-[2.5rem] p-12 text-center text-white shadow-2xl">
-      <h3 className="text-2xl font-semibold mb-4">
-        Holistic Approach to Healthcare
-      </h3>
+              {/* CONTENT */}
+              <div className="p-8">
+                <h3 className="text-lg font-semibold text-slate-900 group-hover:text-green-700 transition">
+                  {service.title}
+                </h3>
 
-      <p className="text-green-100 leading-relaxed text-lg">
-        Every treatment plan is carefully designed after understanding your
-        body constitution (Prakriti), current imbalances (Vikriti), and
-        lifestyle factors. Dr. Shweta integrates Ayurvedic therapies, diet
-        guidance, counseling, and preventive care to ensure sustainable,
-        long-term healing.
-      </p>
-    </div>
+                <p className="mt-3 text-slate-600 text-sm leading-relaxed">
+                  {service.desc}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
-  </div>
-</section>
+        {/* BOTTOM HIGHLIGHT */}
+        <motion.div
+          variants={card}
+          className="mt-24 max-w-4xl mx-auto bg-gradient-to-r from-green-800 to-emerald-700 rounded-[2.5rem] p-12 text-center text-white shadow-2xl"
+        >
+          <h3 className="text-2xl font-semibold mb-4">
+            Holistic Approach to Healthcare
+          </h3>
+
+          <p className="text-green-100 leading-relaxed text-lg">
+            Every treatment plan is carefully designed after understanding your
+            body constitution (Prakriti), current imbalances (Vikriti), and
+            lifestyle factors. Dr. Shweta integrates Ayurvedic therapies, diet
+            guidance, counseling, and preventive care to ensure sustainable,
+            long-term healing.
+          </p>
+        </motion.div>
+      </motion.div>
+    </section>
 
 
-{/* EXPERTISE */}
-<section id="expertise" className="py-[120px] bg-[#F7FBF8]">
-  <div className="max-w-[1200px] mx-auto px-6">
+    <section id="expertise" className="py-[120px] bg-[#F7FBF8] overflow-hidden">
+      <motion.div
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-120px" }}
+        variants={container}
+        className="max-w-[1200px] mx-auto px-6"
+      >
+        {/* HEADING */}
+        <motion.div variants={card} className="max-w-2xl">
+          <h2 className="text-[40px] font-semibold text-green-800 leading-tight">
+            Areas of Expertise
+          </h2>
+          <p className="mt-4 text-gray-600">
+            Comprehensive Ayurvedic care addressing root causes, restoring
+            balance, and promoting long-term holistic wellness.
+          </p>
+        </motion.div>
 
-    {/* HEADING */}
-    <div className="max-w-2xl">
-      <h2 className="text-[40px] font-semibold text-green-800 leading-tight">
-        Areas of Expertise
-      </h2>
-      <p className="mt-4 text-gray-600">
-        Comprehensive Ayurvedic care addressing root causes, restoring balance,
-        and promoting long-term holistic wellness.
-      </p>
-    </div>
+        {/* CARDS */}
+        <motion.div
+          variants={container}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14"
+        >
+          {[
+            {
+              icon: <Flower2 size={22} />,
+              title: "Wellness & Lifestyle",
+              items: [
+                "Stress Management",
+                "Digestive Health",
+                "Sleep Disorders",
+                "Immunity Boosting",
+              ],
+            },
+            {
+              icon: <HeartPulse size={22} />,
+              title: "Women’s Health",
+              items: [
+                "PCOS & Hormonal Balance",
+                "Menstrual Health",
+                "Pregnancy Care",
+                "Menopause",
+              ],
+            },
+            {
+              icon: <ShieldPlus size={22} />,
+              title: "Chronic Conditions",
+              items: [
+                "Diabetes",
+                "Hypertension",
+                "Arthritis",
+                "Skin Disorders",
+              ],
+            },
+            {
+              icon: <Sparkles size={22} />,
+              title: "Specialized Care",
+              items: [
+                "Panchakarma",
+                "Hair & Skin Rejuvenation",
+                "Pediatric Care",
+                "Geriatric Care",
+              ],
+            },
+          ].map((cardItem, i) => (
+            <motion.div
+              key={i}
+              variants={card}
+              whileHover={{ y: -6 }}
+              className="group bg-white rounded-2xl p-8 shadow hover:shadow-2xl transition-all duration-500"
+            >
+              {/* ICON */}
+              <div className="bg-green-100 text-green-700 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition">
+                {cardItem.icon}
+              </div>
 
-    {/* CARDS */}
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14">
+              <h4 className="mt-6 font-semibold text-lg text-green-800 group-hover:text-green-700 transition">
+                {cardItem.title}
+              </h4>
 
-      {/* CARD 1 */}
-      <div className="bg-white rounded-2xl p-8 shadow hover:shadow-xl transition">
-        <div className="bg-green-100 text-green-700 w-12 h-12 rounded-xl flex items-center justify-center">
-          <Flower2 size={22} />
-        </div>
-        <h4 className="mt-6 font-semibold text-lg text-green-800">
-          Wellness & Lifestyle
-        </h4>
-        <ul className="mt-4 space-y-2 text-sm text-gray-600">
-          <li>• Stress Management</li>
-          <li>• Digestive Health</li>
-          <li>• Sleep Disorders</li>
-          <li>• Immunity Boosting</li>
-        </ul>
-      </div>
+              <ul className="mt-4 space-y-2 text-sm text-gray-600">
+                {cardItem.items.map((item) => (
+                  <li key={item}>• {item}</li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </motion.div>
 
-      {/* CARD 2 */}
-      <div className="bg-white rounded-2xl p-8 shadow hover:shadow-xl transition">
-        <div className="bg-green-100 text-green-700 w-12 h-12 rounded-xl flex items-center justify-center">
-          <HeartPulse size={22} />
-        </div>
-        <h4 className="mt-6 font-semibold text-lg text-green-800">
-          Women’s Health
-        </h4>
-        <ul className="mt-4 space-y-2 text-sm text-gray-600">
-          <li>• PCOS & Hormonal Balance</li>
-          <li>• Menstrual Health</li>
-          <li>• Pregnancy Care</li>
-          <li>• Menopause</li>
-        </ul>
-      </div>
-
-      {/* CARD 3 */}
-      <div className="bg-white rounded-2xl p-8 shadow hover:shadow-xl transition">
-        <div className="bg-green-100 text-green-700 w-12 h-12 rounded-xl flex items-center justify-center">
-          <ShieldPlus size={22} />
-        </div>
-        <h4 className="mt-6 font-semibold text-lg text-green-800">
-          Chronic Conditions
-        </h4>
-        <ul className="mt-4 space-y-2 text-sm text-gray-600">
-          <li>• Diabetes</li>
-          <li>• Hypertension</li>
-          <li>• Arthritis</li>
-          <li>• Skin Disorders</li>
-        </ul>
-      </div>
-
-      {/* CARD 4 */}
-      <div className="bg-white rounded-2xl p-8 shadow hover:shadow-xl transition">
-        <div className="bg-green-100 text-green-700 w-12 h-12 rounded-xl flex items-center justify-center">
-          <Sparkles size={22} />
-        </div>
-        <h4 className="mt-6 font-semibold text-lg text-green-800">
-          Specialized Care
-        </h4>
-        <ul className="mt-4 space-y-2 text-sm text-gray-600">
-          <li>• Panchakarma</li>
-          <li>• Hair & Skin Rejuvenation</li>
-          <li>• Pediatric Care</li>
-          <li>• Geriatric Care</li>
-        </ul>
-      </div>
-
-    </div>
-
-    {/* PHILOSOPHY STRIP */}
-    <div className="mt-20 bg-green-700 text-white rounded-3xl p-10 md:p-12 shadow-xl">
-      <h3 className="text-2xl font-semibold">
-        Personalized Ayurvedic Philosophy
-      </h3>
-      <p className="mt-4 max-w-3xl text-green-100 leading-relaxed">
-        Every treatment plan is thoughtfully designed based on your unique body
-        constitution (Prakriti), current imbalances (Vikriti), and lifestyle.
-        Dr. Shweta blends classical Ayurvedic wisdom with modern medical insights
-        to deliver sustainable, long-term healing outcomes.
-      </p>
-    </div>
-
-  </div>
-</section>
+        {/* PHILOSOPHY STRIP */}
+        <motion.div
+          variants={card}
+          className="mt-20 bg-green-700 text-white rounded-3xl p-10 md:p-12 shadow-2xl"
+        >
+          <h3 className="text-2xl font-semibold">
+            Personalized Ayurvedic Philosophy
+          </h3>
+          <p className="mt-4 max-w-3xl text-green-100 leading-relaxed">
+            Every treatment plan is thoughtfully designed based on your unique
+            body constitution (Prakriti), current imbalances (Vikriti), and
+            lifestyle. Dr. Shweta blends classical Ayurvedic wisdom with modern
+            medical insights to deliver sustainable, long-term healing outcomes.
+          </p>
+        </motion.div>
+      </motion.div>
+    </section>
 
 
 {/* TESTIMONIALS */}
