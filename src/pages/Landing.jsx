@@ -9,42 +9,120 @@ import serviceChronic from "../../public/chronic.png";
 import serviceWorkshop from "../../public/educational.png";
 import servicePreventive from "../../public/preventive.png";
 import { HeartPulse, Flower2, ShieldPlus, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Landing() {
+  // ===== GLOBAL ANIMATION VARIANTS =====
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const float = {
+  animate: {
+    y: [0, -12, 0],
+    transition: {
+      duration: 6,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+};
+
   return (
     <div className="font-sans text-slate-900 antialiased">
       <Navbar />
 
- {/* HERO SECTION */}
-<section id="hero" className="relative overflow-hidden bg-gradient-to-b from-[#F3FAF6] via-white to-white py-24 lg:py-36">
 
+{/* HERO SECTION */}
+<section
+  id="hero"
+  className="relative overflow-hidden bg-gradient-to-b from-[#F3FAF6] via-white to-white py-24 lg:py-36"
+>
   {/* Decorative Blobs */}
   <div className="absolute -top-24 -left-24 w-[420px] h-[420px] bg-green-200/40 rounded-full blur-3xl" />
   <div className="absolute top-1/3 -right-32 w-[460px] h-[460px] bg-emerald-200/40 rounded-full blur-3xl" />
 
+  {/* Floating Sparkles */}
+  <motion.div
+    animate={{ y: [0, -14, 0] }}
+    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+    className="absolute top-32 left-16 text-green-300 text-xl"
+  >
+    ✨
+  </motion.div>
+
+  <motion.div
+    animate={{ y: [0, 18, 0] }}
+    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+    className="absolute bottom-40 right-24 text-emerald-300 text-2xl"
+  >
+    🌿
+  </motion.div>
+
   <div className="relative z-10 max-w-[1200px] mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
 
     {/* LEFT CONTENT */}
-    <div className="space-y-10">
-
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, ease: "easeOut" }}
+      className="space-y-10"
+    >
       {/* Badge */}
-      <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-green-100 text-green-800 text-xs font-semibold tracking-widest uppercase">
+      <motion.span
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-green-100 text-green-800 text-xs font-semibold tracking-widest uppercase shadow-sm"
+      >
         🌿 Authentic Ayurveda
-      </span>
+      </motion.span>
 
       {/* Heading */}
-      <div>
-        <h1 className="text-[44px] md:text-[56px] lg:text-[64px] font-semibold text-slate-900 leading-[1.05]">
-          Holistic Healing with <br />
-          <span className="text-green-700 font-bold">
-            Dr. Shweta’s Ayurpot
-          </span>
-        </h1>
+      <motion.h1
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="font-semibold text-slate-900 leading-[1.1]"
+      >
+        <motion.span
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="block text-[28px] md:text-[36px] lg:text-[40px] font-medium text-slate-800"
+        >
+          Holistic Healing with
+        </motion.span>
 
-        <p className="mt-4 text-lg text-slate-600 italic">
-          Dr. Shweta Shete • MD, BAMS <span className="mx-2">•</span> Mumbai
-        </p>
-      </div>
+        <motion.span
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.7 }}
+          className="block mt-2 text-[38px] md:text-[52px] lg:text-[64px] font-bold text-green-700"
+        >
+          Dr. Shweta’s Ayurpot
+        </motion.span>
+      </motion.h1>
+
+      {/* Subtitle */}
+      <p className="text-lg text-slate-600 italic">
+        Dr. Shweta Shete • MD, BAMS <span className="mx-2">•</span> Mumbai
+      </p>
 
       {/* Description */}
       <p className="max-w-xl text-lg leading-relaxed text-slate-600">
@@ -55,25 +133,27 @@ export default function Landing() {
 
       {/* CTA */}
       <div className="flex gap-5 flex-wrap">
-        <a
+        <motion.a
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           href="#contact"
-          className="bg-green-700 hover:bg-green-800 text-white px-9 py-4 rounded-full font-semibold shadow-xl shadow-green-200 transition-all"
+          className="bg-green-700 hover:bg-green-800 text-white px-9 py-4 rounded-full font-semibold shadow-xl shadow-green-200"
         >
           Book Consultation
-        </a>
+        </motion.a>
 
-        <a
+        <motion.a
+          whileHover={{ scale: 1.04 }}
           href="#about"
-          className="px-9 py-4 rounded-full border-2 border-green-700 text-green-700 font-semibold hover:bg-green-50 transition-all"
+          className="px-9 py-4 rounded-full border-2 border-green-700 text-green-700 font-semibold hover:bg-green-50"
         >
           Learn More
-        </a>
+        </motion.a>
       </div>
 
       {/* TRUST STRIP */}
       <div className="pt-10 border-t border-slate-200">
         <div className="flex flex-wrap items-center gap-12">
-
           <div>
             <h3 className="text-4xl font-extrabold text-green-800">3+</h3>
             <p className="text-xs text-slate-500 uppercase tracking-widest font-medium">
@@ -82,56 +162,68 @@ export default function Landing() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {[
-              "MD, BAMS Certified",
-              "Panel Doctor",
-              "Online & In-Clinic"
-            ].map((badge) => (
-              <span
-                key={badge}
-                className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm text-sm text-slate-700 font-medium"
-              >
-                <span className="text-green-600">✔</span> {badge}
-              </span>
-            ))}
+            {["MD, BAMS Certified", "Panel Doctor", "Online & In-Clinic"].map(
+              (badge) => (
+                <span
+                  key={badge}
+                  className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-slate-100 shadow-sm text-sm text-slate-700 font-medium"
+                >
+                  <span className="text-green-600">✔</span> {badge}
+                </span>
+              )
+            )}
           </div>
-
         </div>
       </div>
-    </div>
+    </motion.div>
 
     {/* RIGHT IMAGE */}
     <div className="relative group">
-
       {/* Decorative Frame */}
       <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-tr from-green-200 to-emerald-200 rotate-3 group-hover:rotate-0 transition-transform duration-500" />
 
-      <div className="relative rounded-[2rem] overflow-hidden shadow-2xl">
+      <motion.div
+        whileHover={{ scale: 1.03 }}
+        transition={{ duration: 0.5 }}
+        className="relative rounded-[2rem] overflow-hidden shadow-2xl"
+      >
         <img
           src={heroImg}
           alt="Dr Shweta"
           className="w-full h-full object-cover"
         />
-      </div>
+      </motion.div>
 
       {/* Floating Tag */}
-      <div className="absolute -bottom-6 left-6 bg-white px-6 py-3 rounded-2xl shadow-lg border border-slate-100">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="absolute -bottom-6 left-6 bg-white px-6 py-3 rounded-2xl shadow-lg border border-slate-100"
+      >
         <p className="text-sm font-semibold text-green-700">
           Root-Cause Healing Approach
         </p>
         <p className="text-xs text-slate-500">
           Personalized Ayurvedic Care
         </p>
-      </div>
-
+      </motion.div>
     </div>
-
   </div>
 </section>
 
 
+
 {/* ABOUT SECTION */}
-<section id="about" className="relative py-28 bg-gradient-to-b from-white to-[#F7FBF8] overflow-hidden">
+<motion.section
+  id="about"
+  variants={fadeUp}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}
+  transition={{ duration: 0.9, ease: "easeOut" }}
+  className="relative py-28 bg-gradient-to-b from-white to-[#F7FBF8] overflow-hidden"
+>
 
   {/* Soft Decorative Glow */}
   <div className="absolute -top-24 -left-24 w-[380px] h-[380px] bg-green-100/60 rounded-full blur-3xl" />
@@ -231,7 +323,7 @@ export default function Landing() {
 
     </div>
   </div>
-</section>
+</motion.section>
 
 
 {/* SERVICES SECTION */}
