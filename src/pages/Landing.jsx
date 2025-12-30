@@ -161,8 +161,7 @@ const card = {
           </motion.p>
 
           <motion.p variants={itemVariants} className="max-w-xl text-lg leading-relaxed text-slate-600">
-            Blending ancient wisdom with modern diagnostics. Our personalized care 
-            focuses on root-cause healing and sustainable long-term well-being.
+         Your trusted Ayurvedic wellness companion, bringing ancient wisdom to modern healing. Experience holistic treatments, expert consultations, and personalized care for complete well-being..
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex gap-4 flex-wrap pt-4">
